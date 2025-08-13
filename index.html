@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<title>تتبع ارتباطات البطاقة</title>
+<style>
+    body {
+        font-family: 'Tahoma', sans-serif;
+        background-color: #f4f6f7;
+        padding: 20px;
+        direction: rtl;
+    }
+    h2 {
+        text-align: center;
+        color: #2c3e50;
+    }
+    table {
+        border-collapse: collapse;
+        width: 100%;
+        background: #fff;
+        margin-bottom: 20px;
+    }
+    th, td {
+        border: 1px solid #ccc;
+        padding: 8px;
+        text-align: center;
+    }
+    th {
+        background-color: #27ae60;
+        color: white;
+    }
+    tr:nth-child(even) {
+        background-color: #f9f9f9;
+    }
+    input, select {
+        width: 95%;
+        padding: 5px;
+        border: 1px solid #bbb;
+        border-radius: 4px;
+    }
+    button {
+        padding: 10px 20px;
+        font-size: 16px;
+        background-color: #27ae60;
+        color: white;
+        border: none;
+        border-radius: 6px;
+        cursor: pointer;
+        display: block;
+        margin: auto;
+    }
+    button:hover {
+        background-color: #219150;
+    }
+</style>
+</head>
+<body>
+
+<h2>📋 جدول تتبع المواقع والتطبيقات المرتبطة بالبطاقة</h2>
+
+<table id="trackingTable">
+<thead>
+<tr>
+    <th>رقم</th>
+    <th>اسم الموقع / التطبيق</th>
+    <th>نوع الخدمة</th>
+    <th>تاريخ أول ربط</th>
+    <th>مبلغ الخصم</th>
+    <th>تكرار الخصم</th>
+    <th>حالة الإلغاء</th>
+    <th>ملاحظات</th>
+</tr>
+</thead>
+<tbody id="tableBody">
+<!-- سيتم إنشاء الصفوف بالـ JavaScript -->
+</tbody>
+</table>
+
+<button onclick="saveData()">💾 حفظ البيانات</button>
+
+<script>
+// إنشاء 20 صف
+function createRows() {
+    const tbody = document.getElementById('tableBody');
+    for (let i = 1; i <= 20; i++) {
+        const row = document.createElement('tr');
+        row.innerHTML = `
+            <td>${i}</td>
+            <td><input type="text"></td>
+            <td><input type="text" placeholder="اشتراك / شراء / شحن"></td>
+            <td><input type="date"></td>
+            <td><input type="number" step="0.01"></td>
+            <td>
+                <select>
+                    <option value="">اختر</option>
+                    <option>شهري</option>
+                    <option>سنوي</option>
+                    <option>مرة واحدة</option>
+                </select>
+            </td>
+            <td>
+                <select>
+                    <option>☐ لم يُلغَ</option>
+                    <option>☑ أُلغي</option>
+                </select>
+            </td>
+            <td><input type="text"></td>
+        `;
+        tbody.appendChild(row);
+    }
+}
+
+// حفظ البيانات في Local Storage
+function saveData() {
+    const rows = document.querySelectorAll('#tableBody tr');
+    const tableData = [];
+
+    rows.forEach(row => {
+        const inputs = row.querySelectorAll('input, select');
+        const rowData = [];
+        inputs.forEach(input => rowData.push(input.value));
+        tableData.push(rowData);
+    });
+
+    localStorage.setItem('cardTrackingData', JSON.stringify(tableData));
+    alert('✅ تم حفظ البيانات بنجاح!');
+}
+
+// تحميل البيانات عند فتح الصفحة
+function loadData() {
+    const savedData = localStorage.getItem('cardTrackingData');
+    if (savedData) {
+        const tableData = JSON.parse(savedData);
+        const rows = document.querySelectorAll('#tableBody tr');
+        tableData.forEach((rowData, rowIndex) => {
+            const inputs = rows[rowIndex].querySelectorAll('input, select');
+            rowData.forEach((value, colIndex) => {
+                inputs[colIndex].value = value;
+            });
+        });
+    }
+}
+
+// عند فتح الصفحة
+createRows();
+window.onload = loadData;
+</script>
+
+</body>
+</html>
